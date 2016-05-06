@@ -664,7 +664,7 @@ class Group(BaseAGOLClass):
         if self._thumbnail is None:
             self.__init()
         return self._thumbnail
-        
+
     #----------------------------------------------------------------------
     @property
     def featuredItemsId(self):
@@ -672,7 +672,7 @@ class Group(BaseAGOLClass):
         if self._featuredItemsId is None:
             self.__init()
         return self._featuredItemsId
-        
+
     #----------------------------------------------------------------------
     @property
     def isPublic(self):
@@ -680,7 +680,7 @@ class Group(BaseAGOLClass):
         if self._isPublic is None:
             self.__init()
         return self._isPublic
-        
+
     #----------------------------------------------------------------------
     @property
     def isOrganization(self):
@@ -1208,8 +1208,8 @@ class Users(BaseAGOLClass):
     def __getUsername(self):
         """tries to parse the user name from various objects"""
 
-        if isinstance(self._securityHandler, (AGOLTokenSecurityHandler,
-                                              PortalTokenSecurityHandler)):
+        if self._securityHandler is not None and \
+           not self._securityHandler._username is None:
             return self._securityHandler._username
         elif self._securityHandler is not None and \
                hasattr(self._securityHandler, "org_url") and \
@@ -1280,6 +1280,11 @@ class User(BaseAGOLClass):
     _availableCredits = None
     _firstName = None
     _lastName = None
+    _clientApps = None
+    _accountId = None
+    _privacy = None
+    _defaultGroupId = None
+    _organization = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1536,6 +1541,41 @@ class User(BaseAGOLClass):
         return self._thumbnail
     #----------------------------------------------------------------------
     @property
+    def clientApps(self):
+        '''gets clientApps value'''
+        if self._clientApps is None:
+            self.__init()
+        return self._clientApps
+    #----------------------------------------------------------------------
+    @property
+    def accountId(self):
+        '''gets accountId value'''
+        if self._accountId is None:
+            self.__init()
+        return self._accountId
+    #----------------------------------------------------------------------
+    @property
+    def privacy(self):
+        '''gets privacy value'''
+        if self._privacy is None:
+            self.__init()
+        return self._privacy
+    #----------------------------------------------------------------------
+    @property
+    def defaultGroupId(self):
+        '''gets defaultGroupId value'''
+        if self._defaultGroupId is None:
+            self.__init()
+        return self._defaultGroupId
+    #----------------------------------------------------------------------
+    @property
+    def organization(self):
+        '''gets organization value'''
+        if self._organization is None:
+            self.__init()
+        return self._organization
+    #----------------------------------------------------------------------
+    @property
     def orgId(self):
         '''gets orgId value'''
         if self._orgId is None:
@@ -1688,11 +1728,11 @@ class User(BaseAGOLClass):
             "f" : "json"
         }
         url = self.root + "/enable"
-        return self._get(securityHandler=self._securityHandler,
-                            url = url,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._post(url=url,
+                   param_dict=params,
+                   securityHandler=self._securityHandler,
+                   proxy_url=self._proxy_url,
+                   proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def update(self,
                clearEmptyFields=None,
